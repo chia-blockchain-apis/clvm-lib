@@ -169,23 +169,24 @@ export class Program {
         return curryProgram.run(Program.cons(this, Program.fromList(args))).value;
     }
 
-    private _uncurryPatternFunc?: Program;
-    private _uncurryPatternCore?: Program;
+    // private _uncurryPatternFunc?: Program;
+    // private _uncurryPatternCore?: Program;
     public uncurry(): [Program, Program[]] | null {
-        const uncurryPatternFunc = this._uncurryPatternFunc || (this._uncurryPatternFunc = Program.fromSource(
+        const uncurryPatternFunction = Program.fromSource(
             '(a (q . (: . function)) (: . core))'
-        ));
+        );
+        const uncurryPatternCore = Program.fromSource(
+            '(c (q . (: . parm)) (: . core))'
+        );
 
-        let result = match(uncurryPatternFunc, this);
+
+        let result = match(uncurryPatternFunction, this);
         if (!result) return null;
 
         const fn = result.function;
         let core = result.core;
 
         const args: Array<Program> = [];
-        const uncurryPatternCore = this._uncurryPatternCore || (this._uncurryPatternCore = Program.fromSource(
-            '(c (q . (: . parm)) (: . core))'
-        ));
 
         while (true) {
             result = match(uncurryPatternCore, core);
