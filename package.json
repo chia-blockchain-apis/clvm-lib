@@ -5,7 +5,7 @@
     "description": "A browser friendly implementation of clvm.",
     "repository": "https://github.com/Chia-Network/node-clvm-lib.git",
     "license": "Apache-2.0",
-    "main": "dist/src/index.js",
+    "main": "dist/index.js",
     "source": "src/index.ts",
     "types": "dist/src/index.d.ts",
     "bundle": "dist/bundle.js",
