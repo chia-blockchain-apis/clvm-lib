@@ -10,7 +10,7 @@
     "types": "dist/src/index.d.ts",
     "bundle": "dist/bundle.js",
     "scripts": {
-        "prepare": "tsc",
+        "prepare": "tsc --outFile ./dist/index.js",
         "build": "tsc"
     },
     "files": [

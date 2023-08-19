@@ -4,7 +4,7 @@
         "outDir": "dist",
         "moduleResolution": "node",
         "target": "ESNext",
-        "module": "CommonJS",
+        "module": "AMD",
         "downlevelIteration": true,
         "esModuleInterop": true,
         "declaration": true,
