@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai';
-import { Program } from '../src';
+import { Program } from '..';
 
 type CompileInput = [puzzle: string, cost?: bigint, strict?: boolean];
 

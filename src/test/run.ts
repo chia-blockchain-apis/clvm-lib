@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai';
-import { Program } from '../src';
+import { Program } from '..';
 
 type RunInput = [
     puzzle: string,

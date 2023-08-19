@@ -10,9 +10,7 @@
     "types": "dist/src/index.d.ts",
     "bundle": "dist/bundle.js",
     "scripts": {
-        "build": "parcel build",
-        "watch": "parcel watch",
-        "test": "parcel build --target test && mocha './dist/test/**/*.js' --require source-map-support/register --recursive --timeout 0"
+        "build": "tsc"
     },
     "files": [
         "dist/src"
