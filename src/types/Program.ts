@@ -161,21 +161,21 @@ export class Program {
         return this;
     }
 
+    private _curryProgram = Program.fromSource(
+        '(a (q #a 4 (c 2 (c 5 (c 7 0)))) (c (q (c (q . 2) (c (c (q . 1) 5) (c (a 6 (c 2 (c 11 (q 1)))) 0))) #a (i 5 (q 4 (q . 4) (c (c (q . 1) 9) (c (a 6 (c 2 (c 13 (c 11 0)))) 0))) (q . 11)) 1) 1))'
+    );
     public curry(args: Program[]): Program {
-        return Program.fromSource(
-            '(a (q #a 4 (c 2 (c 5 (c 7 0)))) (c (q (c (q . 2) (c (c (q . 1) 5) (c (a 6 (c 2 (c 11 (q 1)))) 0))) #a (i 5 (q 4 (q . 4) (c (c (q . 1) 9) (c (a 6 (c 2 (c 13 (c 11 0)))) 0))) (q . 11)) 1) 1))'
-        ).run(Program.cons(this, Program.fromList(args))).value;
+        return this._curryProgram.run(Program.cons(this, Program.fromList(args))).value;
     }
 
+    private _uncurryPatternFunc = Program.fromSource(
+        '(a (q . (: . function)) (: . core))'
+    );
+    private _uncurryPatternCore = Program.fromSource(
+        '(c (q . (: . parm)) (: . core))'
+    );
     public uncurry(): [Program, Program[]] | null {
-        const uncurryPatternFunction = Program.fromSource(
-            '(a (q . (: . function)) (: . core))'
-        );
-        const uncurryPatternCore = Program.fromSource(
-            '(c (q . (: . parm)) (: . core))'
-        );
-
-        let result = match(uncurryPatternFunction, this);
+        let result = match(this._uncurryPatternFunc, this);
         if (!result) return null;
 
         const fn = result.function;
@@ -184,7 +184,7 @@ export class Program {
         const args: Array<Program> = [];
 
         while (true) {
-            result = match(uncurryPatternCore, core);
+            result = match(this._uncurryPatternCore, core);
             if (!result) break;
 
             args.push(result.parm);
@@ -199,12 +199,12 @@ export class Program {
         return this.isAtom
             ? hash256(concatBytes(Uint8Array.from([1]), this.atom))
             : hash256(
-                  concatBytes(
-                      Uint8Array.from([2]),
-                      this.first.hash(),
-                      this.rest.hash()
-                  )
-              );
+                concatBytes(
+                    Uint8Array.from([2]),
+                    this.first.hash(),
+                    this.rest.hash()
+                )
+            );
     }
 
     public hashHex(): string {
@@ -318,8 +318,7 @@ export class Program {
             cost += instruction(instructionStack, stack, fullOptions);
             if (fullOptions.maxCost !== undefined && cost > fullOptions.maxCost)
                 throw new Error(
-                    `Exceeded cost of ${fullOptions.maxCost}${
-                        stack[stack.length - 1].positionSuffix
+                    `Exceeded cost of ${fullOptions.maxCost}${stack[stack.length - 1].positionSuffix
                     }.`
                 );
         }
@@ -332,8 +331,7 @@ export class Program {
     public toBytes(): Uint8Array {
         if (this.isCons)
             throw new Error(
-                `Cannot convert ${this.toString()} to hex${
-                    this.positionSuffix
+                `Cannot convert ${this.toString()} to hex${this.positionSuffix
                 }.`
             );
         return this.atom;
@@ -342,8 +340,7 @@ export class Program {
     public toJacobianPoint(): JacobianPoint {
         if (this.isCons || (this.atom.length !== 48 && this.atom.length !== 96))
             throw new Error(
-                `Cannot convert ${this.toString()} to JacobianPoint${
-                    this.positionSuffix
+                `Cannot convert ${this.toString()} to JacobianPoint${this.positionSuffix
                 }.`
             );
         return this.atom.length === 48
@@ -354,8 +351,7 @@ export class Program {
     public toPrivateKey(): PrivateKey {
         if (this.isCons)
             throw new Error(
-                `Cannot convert ${this.toString()} to private key${
-                    this.positionSuffix
+                `Cannot convert ${this.toString()} to private key${this.positionSuffix
                 }.`
             );
         return PrivateKey.fromBytes(this.atom);
@@ -364,8 +360,7 @@ export class Program {
     public toHex(): string {
         if (this.isCons)
             throw new Error(
-                `Cannot convert ${this.toString()} to hex${
-                    this.positionSuffix
+                `Cannot convert ${this.toString()} to hex${this.positionSuffix
                 }.`
             );
         return toHex(this.atom);
@@ -374,8 +369,7 @@ export class Program {
     public toBool(): boolean {
         if (this.isCons)
             throw new Error(
-                `Cannot convert ${this.toString()} to bool${
-                    this.positionSuffix
+                `Cannot convert ${this.toString()} to bool${this.positionSuffix
                 }.`
             );
         return !this.isNull;
@@ -384,8 +378,7 @@ export class Program {
     public toInt(): number {
         if (this.isCons)
             throw new Error(
-                `Cannot convert ${this.toString()} to int${
-                    this.positionSuffix
+                `Cannot convert ${this.toString()} to int${this.positionSuffix
                 }.`
             );
         return decodeInt(this.atom);
@@ -394,8 +387,7 @@ export class Program {
     public toBigInt(): bigint {
         if (this.isCons)
             throw new Error(
-                `Cannot convert ${this.toString()} to bigint${
-                    this.positionSuffix
+                `Cannot convert ${this.toString()} to bigint${this.positionSuffix
                 }.`
             );
         return decodeBigInt(this.atom);
@@ -404,8 +396,7 @@ export class Program {
     public toText(): string {
         if (this.isCons)
             throw new Error(
-                `Cannot convert ${this.toString()} to text${
-                    this.positionSuffix
+                `Cannot convert ${this.toString()} to text${this.positionSuffix
                 }.`
             );
         return new TextDecoder().decode(this.atom);
@@ -495,8 +486,7 @@ export class Program {
                     result.push((size >> 0) & 0xff);
                 } else
                     throw new RangeError(
-                        `Cannot serialize ${this.toString()} as it is 17,179,869,184 or more bytes in size${
-                            this.positionSuffix
+                        `Cannot serialize ${this.toString()} as it is 17,179,869,184 or more bytes in size${this.positionSuffix
                         }.`
                     );
                 for (const byte of this.atom) result.push(byte);
@@ -520,7 +510,7 @@ export class Program {
             (this.isAtom
                 ? bytesEqual(this.atom, value.atom)
                 : this.first.equals(value.first) &&
-                  this.rest.equals(value.rest))
+                this.rest.equals(value.rest))
         );
     }
 
