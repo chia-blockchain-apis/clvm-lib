@@ -161,30 +161,34 @@ export class Program {
         return this;
     }
 
-    private _curryProgram = Program.fromSource(
-        '(a (q #a 4 (c 2 (c 5 (c 7 0)))) (c (q (c (q . 2) (c (c (q . 1) 5) (c (a 6 (c 2 (c 11 (q 1)))) 0))) #a (i 5 (q 4 (q . 4) (c (c (q . 1) 9) (c (a 6 (c 2 (c 13 (c 11 0)))) 0))) (q . 11)) 1) 1))'
-    );
+    private _curryProgram?: Program;
     public curry(args: Program[]): Program {
-        return this._curryProgram.run(Program.cons(this, Program.fromList(args))).value;
+        const curryProgram = this._curryProgram || (this._curryProgram = Program.fromSource(
+            '(a (q #a 4 (c 2 (c 5 (c 7 0)))) (c (q (c (q . 2) (c (c (q . 1) 5) (c (a 6 (c 2 (c 11 (q 1)))) 0))) #a (i 5 (q 4 (q . 4) (c (c (q . 1) 9) (c (a 6 (c 2 (c 13 (c 11 0)))) 0))) (q . 11)) 1) 1))'
+        ));
+        return curryProgram.run(Program.cons(this, Program.fromList(args))).value;
     }
 
-    private _uncurryPatternFunc = Program.fromSource(
-        '(a (q . (: . function)) (: . core))'
-    );
-    private _uncurryPatternCore = Program.fromSource(
-        '(c (q . (: . parm)) (: . core))'
-    );
+    private _uncurryPatternFunc?: Program;
+    private _uncurryPatternCore?: Program;
     public uncurry(): [Program, Program[]] | null {
-        let result = match(this._uncurryPatternFunc, this);
+        const uncurryPatternFunc = this._uncurryPatternFunc || (this._uncurryPatternFunc = Program.fromSource(
+            '(a (q . (: . function)) (: . core))'
+        ));
+
+        let result = match(uncurryPatternFunc, this);
         if (!result) return null;
 
         const fn = result.function;
         let core = result.core;
 
         const args: Array<Program> = [];
+        const uncurryPatternCore = this._uncurryPatternCore || (this._uncurryPatternCore = Program.fromSource(
+            '(c (q . (: . parm)) (: . core))'
+        ));
 
         while (true) {
-            result = match(this._uncurryPatternCore, core);
+            result = match(uncurryPatternCore, core);
             if (!result) break;
 
             args.push(result.parm);
