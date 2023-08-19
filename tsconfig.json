@@ -4,7 +4,7 @@
         "outDir": "dist",
         "moduleResolution": "node",
         "target": "ESNext",
-        "module": "System",
+        "module": "CommonJS",
         "downlevelIteration": true,
         "esModuleInterop": true,
         "declaration": true,

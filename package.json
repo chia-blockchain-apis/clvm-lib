@@ -14,7 +14,7 @@
         "build": "tsc"
     },
     "files": [
-        "dist/src"
+        "dist"
     ],
     "targets": {
         "main": {
