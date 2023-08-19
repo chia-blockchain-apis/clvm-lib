@@ -4,7 +4,7 @@
         "outDir": "dist",
         "moduleResolution": "node",
         "target": "ESNext",
-        "module": "AMD",
+        "module": "System",
         "downlevelIteration": true,
         "esModuleInterop": true,
         "declaration": true,
